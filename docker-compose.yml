@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  mssql:
+    container_name: sql-server
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    restart: always
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Express
+      - MSSQL_SA_PASSWORD=HCVbd4_prv@
+      - MSSQL_DATABASE=bookdb
+      - MSSQL_SLEEP=15
+    ports:
+      - 1433:1433
+    command: /bin/bash -c '/opt/mssql/bin/sqlservr & echo "wait $$MSSQL_SLEEP sec for DB to start "; sleep $$MSSQL_SLEEP; /opt/mssql-tools/bin/sqlcmd -U sa -P $$MSSQL_SA_PASSWORD -d master -q "EXIT(CREATE DATABASE $$MSSQL_DATABASE)"; wait;'
+    volumes:
+      - mssql_dev_data:/var/opt/mssql/data
+
+volumes:
+  mssql_dev_data:
